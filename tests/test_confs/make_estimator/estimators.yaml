@@ -1,0 +1,91 @@
+random_forest:
+  _target_: sklearn.ensemble.RandomForestClassifier
+  n_estimators:
+    _target_: random.randint
+    a: 30
+    b: 200
+  criterion:
+    _target_: random.choice
+    seq: [gini, entropy, log_loss]
+  max_depth:
+    _target_: random.randint
+    a: 2
+    b: 12
+  min_samples_split:
+    _target_: random.uniform
+    a: 0.01
+    b: 0.2
+  min_samples_leaf:
+    _target_: random.uniform
+    a: 0.01
+    b: 0.05
+  max_features:
+    _target_: random.choice
+    seq: [sqrt, log2]
+  random_state: 0
+
+gradient_boosting:
+  _target_: sklearn.ensemble.GradientBoostingClassifier
+  n_estimators:
+    _target_: random.randint
+    a: 30
+    b: 200
+  learning_rate:
+    _target_: random.uniform
+    a: 0.01
+    b: 0.1
+  criterion:
+    _target_: random.choice
+    seq: [friedman_mse, squared_error]
+  max_depth:
+    _target_: random.randint
+    a: 2
+    b: 12
+  min_samples_split:
+    _target_: random.uniform
+    a: 0.01
+    b: 0.2
+  min_samples_leaf:
+    _target_: random.uniform
+    a: 0.01
+    b: 0.05
+  subsample:
+    _target_: random.uniform
+    a: 0.5
+    b: 1.0
+  max_features:
+    _target_: random.choice
+    seq: [sqrt, log2]
+  random_state: 0
+
+prob_svm:
+  _target_: sklearn.calibration.CalibratedClassifierCV
+  estimator:
+    _target_: sklearn.svm.LinearSVC
+    random_state: 0
+    dual: false
+    penalty:
+      _target_: random.choice
+      seq: [l1, l2]
+    C:
+      _target_: random.uniform
+      a: 1.0
+      b: 10.0
+    max_iter:
+      _target_: random.randint
+      a: 1500
+      b: 2000
+
+log_reg:
+  _target_: sklearn.linear_model.LogisticRegression
+  penalty:
+    _target_: random.choice
+    seq: [l1, l2]
+  fit_intercept:
+    _target_: random.choice
+    seq: [True, False]
+  solver: saga
+  max_iter:
+      _target_: random.randint
+      a: 200
+      b: 1000

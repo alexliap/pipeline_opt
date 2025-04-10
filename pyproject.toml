@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/pipeline_opt/__about__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pipeline_opt"]
+
+[project]
+name = "pipeline-opt"
+dynamic = ["version"]
+dependencies = ["scikit-learn", "loguru", "hydra-core"]
+requires-python = ">=3.12"
+authors = [
+    { name = "Alexandros Liapatis", email = "alexandrosliapatis@gmail.com" },
+]
+maintainers = [
+    { name = "Alexandros Liapatis", email = "alexandrosliapatis@gmail.com" },
+]
+description = ""
+readme = "README.md"
+
+[project.optional-dependencies]
+dev = ["pre-commit", "pyright", "pytest"]
+
+[project.urls]
+Homepage = "https://github.com/alexliap/"
+Documentation = "https://alexliap.github.io/"
+Repository = "https://github.com/alexliap/"
+Issues = "https://github.com/alexliap/"
