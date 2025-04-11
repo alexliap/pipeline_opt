@@ -2,7 +2,6 @@ import random
 
 from hydra.utils import instantiate
 from omegaconf import DictConfig
-from omegaconf.omegaconf import OmegaConf
 from sklearn.base import BaseEstimator
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline, make_pipeline, make_union

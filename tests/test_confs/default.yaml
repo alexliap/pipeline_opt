@@ -1,3 +1,4 @@
 defaults:
   - _self_
   - make_estimator: estimators
+  - make_random_estimator: estimators

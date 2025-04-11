@@ -1,0 +1,82 @@
+random_forest:
+  _target_: sklearn.ensemble.RandomForestClassifier
+  n_estimators:
+    _target_: random.randint
+    a: 30
+    b: 200
+  criterion:
+    _target_: random.choice
+    seq: [gini, entropy, log_loss]
+  max_depth:
+    _target_: random.randint
+    a: 2
+    b: 12
+  min_samples_split:
+    _target_: random.uniform
+    a: 0.01
+    b: 0.2
+  min_samples_leaf:
+    _target_: random.uniform
+    a: 0.01
+    b: 0.05
+  max_features:
+    _target_: random.choice
+    seq: [sqrt, log2]
+  random_state: 0
+
+gradient_boosting:
+  _target_: sklearn.ensemble.GradientBoostingClassifier
+  n_estimators:
+    _target_: random.randint
+    a: 30
+    b: 200
+  learning_rate:
+    _target_: random.uniform
+    a: 0.01
+    b: 0.1
+  criterion:
+    _target_: random.choice
+    seq: [friedman_mse, squared_error]
+  max_depth:
+    _target_: random.randint
+    a: 2
+    b: 12
+  min_samples_split:
+    _target_: random.uniform
+    a: 0.01
+    b: 0.2
+  min_samples_leaf:
+    _target_: random.uniform
+    a: 0.01
+    b: 0.05
+  subsample:
+    _target_: random.uniform
+    a: 0.5
+    b: 1.0
+  max_features:
+    _target_: random.choice
+    seq: [sqrt, log2]
+  random_state: 0
+
+select_k_best:
+    _target_: sklearn.feature_selection.SelectKBest
+    k:
+      _target_: random.randint
+      a: 15
+      b: 75
+
+standard_scaler:
+  _target_: sklearn.preprocessing.StandardScaler
+  with_mean:
+    _target_: random.choice
+    seq: [true, false]
+  with_std:
+    _target_: random.choice
+    seq: [true, false]
+
+minmax_scaler:
+  _target_: sklearn.preprocessing.MinMaxScaler
+  feature_range:
+    _target_: builtins.tuple
+    _args_:
+      - [0, 1]
