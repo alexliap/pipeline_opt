@@ -4,6 +4,7 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig
 from sklearn.base import BaseEstimator
 from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import VotingClassifier, VotingRegressor
 from sklearn.pipeline import Pipeline, make_pipeline, make_union
 
 from .error_messages import ErrorMessages
@@ -15,7 +16,7 @@ def make_estimator(
     """Create a specific module that exists in the config file with randomized arguments.
 
     Args:
-        cfg (DictConfig): Hydra configuration YAML file.
+        cfg (DictConfig): Hydra configuration loaded from YAML file.
         object_key (str): Family of modules declared in the configuration file.
         module_name (str): Specific module to be created. The name specified must be the same as in the YAML file. Defaults to [].
 
@@ -32,7 +33,7 @@ def make_random_estimator(
     family (object_key). The user can also add exclusions by adding their name in a list.
 
     Args:
-        cfg (DictConfig): Hydra configuration YAML file.
+        cfg (DictConfig): Hydra configuration loaded from YAML file.
         object_key (str): Family of modules declared in the configuration file.
         exclusions (list[str], optional): Modules to exclude from creating. The name specified must be the same as
                                           in the YAML file. Defaults to [].
@@ -55,7 +56,7 @@ def make_random_pipeline(
     component.
 
     Args:
-        cfg (DictConfig): Hydra configuration YAML file.
+        cfg (DictConfig): Hydra configuration loaded from YAML file.
         components (list[str]): The list of components to include in the piepline.
         exclusions (list[str], optional): Modules to exclude from creating. The name specified must be the same as in the YAML file. Defaults to [].
 
@@ -78,9 +79,9 @@ def make_random_col_trans(
     """Create a ColumnTransformer for specific columns, using a random Pipeline.
 
     Args:
-        cfg (DictConfig): Hydra configuration YAML file.
+        cfg (DictConfig): Hydra configuration loaded from YAML file.
         name (str): Given name of the respective pipeline.
-        components (list[str]): The list of components to include in the piepline.
+        components (list[str]): The list of components to include in the pipeline.
         columns (list[str | int]): Columns where the ColumnTransformer is going to be applied.
         exclusions (list[str], optional): Modules to exclude from creating. The name specified must be the same as
                                           in the YAML file. Defaults to [].
@@ -105,9 +106,20 @@ def make_random_col_trans(
 def make_random_union(
     cfg: DictConfig,
     estimators: list[list[str]],
-    columns: list[list[str]],
+    columns: list[list[str | int]],
     exclusions: list[list[str]] = [],
 ):
+    """Create a FeatureUnion that consist of one or more ColumnTransformer.
+
+    Args:
+        cfg (DictConfig): Hydra configuration loaded from YAML file.
+        estimators (list[list[str]]): A list of lists where each list represents the components used to instantiate a ColumnTransformer.
+        columns (list[list[str | int]]): A list of lists where each list represents the columns onto which the respective ColumnTransformers are going to be applied to.
+        exclusions (list[list[str]], optional): A list of lists where each list represents the components to exclude per ColumnTransformer. Defaults to [].
+
+    Returns:
+        FeatureUnion: FeatureUnion object.
+    """
     if len(estimators) != len(columns):
         raise Exception(ErrorMessages.EQUAL_LENGTH_LISTS)
 
@@ -145,14 +157,29 @@ def make_random_voting(
     max_number_of_est: int,
     exclusions: list[str] = [],
 ):
-    exclusions.append(voting_config_name)
-    available_estimators = list(cfg[models_key].keys())
+    """Make a Ensemble model using a VotingRegressor/VotingClassifier. A configuration on such an object must be present in the
+    respective YAML file where the estimators parameter is null. The amount of models is randomly chosen. No duplicate models can exist.
 
-    for est in available_estimators:
-        if est in exclusions:
-            available_estimators.remove(est)
+    Args:
+        cfg (DictConfig): Hydra configuration loaded from YAML file.
+        models_key (str): Family of modules declared in the configuration file.
+        voting_config_name (str): Name of the voting configuration.
+        max_number_of_est (int): Maximum number of estimators to include in the ensemble.
+        exclusions (list[str], optional): Modules to exclude from creating. The name specified must be the same as
+                                          in the YAML file.. Defaults to [].
+
+    Returns:
+        BaseEstimator: VotingRegressor/VotingClassifier object.
+    """
+    exclusions.append(voting_config_name)
+    available_estimators = [
+        est for est in cfg[models_key].keys() if est not in exclusions
+    ]
 
     random.shuffle(available_estimators)
+
+    if max_number_of_est > len(available_estimators):
+        raise Exception(ErrorMessages.ENSEMBLE_LIMIT)
 
     num_of_estimators = random.choice(list(range(2, max_number_of_est + 1)))
 
@@ -160,9 +187,15 @@ def make_random_voting(
 
     instantiated_estimators = []
     for est in chosen_estimators:
-        instantiated_estimators.append((est, make_estimator(cfg, models_key, est)))
+        if est not in exclusions:
+            instantiated_estimators.append((est, make_estimator(cfg, models_key, est)))
 
     voting = make_estimator(cfg, models_key, voting_config_name)
+
+    if not isinstance(voting, VotingRegressor) and not isinstance(
+        voting, VotingClassifier
+    ):
+        raise Exception(ErrorMessages.ENSEMBLE_OBJECT)
 
     voting.set_params(estimators=instantiated_estimators)
 

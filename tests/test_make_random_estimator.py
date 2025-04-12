@@ -44,6 +44,9 @@ def test_make_random_estimator_exclusions():
 
         obj = make_random_estimator(cfg, "make_random_estimator", exclusions=[est])
 
+        # check that the created object is a BaseEstimator
         assert isinstance(obj, BaseEstimator)
+        # and that is of the same type as somehting in the list
         assert type(obj) in type_list
+        # and that is not of the same type as the one excluded
         assert not isinstance(obj, type(instantiate(cfg["make_random_estimator"][est])))

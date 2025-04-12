@@ -5,3 +5,4 @@ defaults:
   - scalers: estimators
   - feature_selection: estimators
   - encoders: estimators
+  - models: estimators

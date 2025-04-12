@@ -25,11 +25,21 @@ def test_make_random_union():
     )
 
     assert isinstance(obj, FeatureUnion)
+    # test case where len(columns[i]) == 0
+    obj = make_random_union(
+        cfg,
+        estimators=[["scalers", "feature_selection"], ["models"]],
+        columns=[["num"], []],
+        exclusions=[],
+    )
+
+    assert isinstance(obj, FeatureUnion)
 
 
 def test_make_random_union_unequal_lengths():
     cfg = load_test_confs()
 
+    # check case where we have more ColumnTransformers than column lists
     with pytest.raises(Exception) as exc_info:
         _ = make_random_union(
             cfg,
@@ -40,6 +50,7 @@ def test_make_random_union_unequal_lengths():
 
     assert str(exc_info.value) == ErrorMessages.EQUAL_LENGTH_LISTS
 
+    # check case where we have less ColumnTransformers than column lists
     with pytest.raises(Exception) as exc_info:
         _ = make_random_union(
             cfg,
