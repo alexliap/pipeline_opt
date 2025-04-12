@@ -1,0 +1,29 @@
+select_k_best:
+    _target_: sklearn.feature_selection.SelectKBest
+    k:
+      _target_: random.randint
+      a: 15
+      b: 75
+
+lasso:
+    _target_: sklearn.feature_selection.SelectFromModel
+    estimator:
+      _target_: sklearn.linear_model.Lasso
+      alpha:  # Regularization strength
+        _target_: random.uniform
+        a: 1
+        b: 10
+      max_iter: 1000
+      random_state: 0
+    threshold: median
+
+ridge:
+    _target_: sklearn.feature_selection.SelectFromModel
+    estimator:
+      _target_: sklearn.linear_model.Ridge
+      alpha:
+        _target_: random.uniform
+        a: 1
+        b: 10
+      random_state: 42
+    threshold: median

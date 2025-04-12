@@ -1,0 +1,15 @@
+standard_scaler:
+  _target_: sklearn.preprocessing.StandardScaler
+  with_mean:
+    _target_: random.choice
+    seq: [true, false]
+  with_std:
+    _target_: random.choice
+    seq: [true, false]
+
+minmax_scaler:
+  _target_: sklearn.preprocessing.MinMaxScaler
+  feature_range:
+    _target_: builtins.tuple
+    _args_:
+      - [0, 1]

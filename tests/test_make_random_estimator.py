@@ -16,22 +16,24 @@ def load_test_confs() -> DictConfig:
 def test_make_random_estimator():
     cfg = load_test_confs()
 
+    # add every available type to a list
     type_list = []
     for est in cfg["make_random_estimator"]:
         type_list.append(type(instantiate(cfg["make_random_estimator"][est])))
 
+    # make a random object
     obj = make_random_estimator(cfg, "make_random_estimator")
 
+    # check that the created object is a BaseEstimator
     assert isinstance(obj, BaseEstimator)
+    # and that is of the same type as somehting in the list
     assert type(obj) in type_list
 
 
 def test_make_random_estimator_exclusions():
     cfg = load_test_confs()
 
-    est_list = []
-    for est in cfg["make_random_estimator"].keys():
-        est_list.append(est)
+    est_list = [est for est in cfg["make_random_estimator"].keys()]
 
     for est in est_list:
         type_list = [

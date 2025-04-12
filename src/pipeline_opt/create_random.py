@@ -106,7 +106,7 @@ def make_random_union(
     cfg: DictConfig,
     estimators: list[list[str]],
     columns: list[list[str]],
-    exclusions: list[list[str]],
+    exclusions: list[list[str]] = [],
 ):
     if len(estimators) != len(columns):
         raise Exception(ErrorMessages.EQUAL_LENGTH_LISTS)
@@ -119,7 +119,9 @@ def make_random_union(
         if len(columns[i]) == 0:
             transformers.append(
                 make_random_pipeline(
-                    cfg, components=estimators[i], exclusions=exclusions[i]
+                    cfg,
+                    components=estimators[i],
+                    exclusions=exclusions[i] if exclusions else [],
                 )
             )
         else:
@@ -129,7 +131,7 @@ def make_random_union(
                     name=f"estimator_{i}",
                     components=estimators[i],
                     columns=columns[i],
-                    exclusions=exclusions[i],
+                    exclusions=exclusions[i] if exclusions else [],
                 )
             )
 

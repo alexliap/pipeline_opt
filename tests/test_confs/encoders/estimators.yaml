@@ -1,0 +1,5 @@
+one_hot_encoder:
+  _target_: sklearn.preprocessing.OneHotEncoder
+  categories: auto
+  drop: first
+  handle_unknown: ignore
