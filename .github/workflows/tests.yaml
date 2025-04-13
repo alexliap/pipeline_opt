@@ -22,4 +22,10 @@ jobs:
             - name: Install Dependencies
               run: pip install -e '.[dev]'
             - name: Run tests
-              run: pytest
+              run: pytest --cov src/ --cov-report json
+
+            - name: Update Coverage Badge
+              # GitHub actions: default branch variable
+              # https://stackoverflow.com/questions/64781462/github-actions-default-branch-variable
+              if: github.ref == 'refs/heads/master'
+              uses: we-cli/coverage-badge-action@main

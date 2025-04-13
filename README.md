@@ -3,6 +3,7 @@
 <!-- ![deploy on pypi](https://github.com/alexliap/sk_serve/actions/workflows/publish_package.yaml/badge.svg) -->
 <!-- ![PyPI Version](https://img.shields.io/pypi/v/simple-serve?label=pypi%20package) -->
 <!-- ![Downloads](https://static.pepy.tech/badge/simple-serve) -->
+[![cov](https://alexliap.github.io/pipeline_opt/badges/coverage.svg)](https://github.com/alexliap/pipeline_opt/actions)
 
 Utility framework in order to send your hyperparameter optimization loop to the next level. Just define the the you sklearn pipeline steps and let random search determine what is best for your problem.
 
