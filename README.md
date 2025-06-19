@@ -5,7 +5,7 @@
 <!-- ![Downloads](https://static.pepy.tech/badge/simple-serve) -->
 [![cov](https://github.com/alexliap/pipeline_opt/blob/gh-pages/badges/coverage.svg)](https://github.com/alexliap/pipeline_opt/actions)
 
-Utility framework in order to send your hyperparameter optimization loop to the next level. Just define the the you sklearn pipeline steps and let random search determine what is best for your problem.
+Utility framework in order to send your hyperparameter optimization loop to the next level. Just define the sklearn pipeline steps and let random search determine which pipeline is the best for your problem.
 
 ### Usage
 
